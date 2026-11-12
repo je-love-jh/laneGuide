@@ -1,0 +1,27 @@
+# 내 PC 설정 (SDK 경로 등) — 올리지 않음
+local.properties
+
+# 인수인계 문서 (공모전 기획안·지원서 링크 포함) — 내 PC 에만
+CLAUDE.md
+.claude/
+
+# Pleos SDK AAR 사본 (배포 금지 가능성, 확인용)
+sdk-inspect/
+
+# 빌드 결과물·캐시
+build/
+.gradle/
+.kotlin/
+*.apk
+*.aab
+
+# Android Studio 설정
+.idea/
+*.iml
+captures/
+.externalNativeBuild/
+.cxx/
+
+# OS
+.DS_Store
+Thumbs.db
