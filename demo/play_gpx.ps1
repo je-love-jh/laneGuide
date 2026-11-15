@@ -9,7 +9,7 @@
 
 $ErrorActionPreference = "Stop"
 $adb = Join-Path $env:LOCALAPPDATA "Android\Sdk\platform-tools\adb.exe"
-$gpxPath = if (Test-Path $Gpx) { $Gpx } else { Join-Path $PSScriptRoot $Gpx }
+$gpxPath = if (Test-Path $Gpx) { $Gpx } else { Join-Path $PSScriptRoot "..\app\src\main\assets\$Gpx" }
 
 Write-Host "앱을 다시 시작합니다: $Profile, 높이 $Height m"
 & $adb logcat -c

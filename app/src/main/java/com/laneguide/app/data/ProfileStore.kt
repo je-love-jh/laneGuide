@@ -26,7 +26,13 @@ class ProfileStore(context: Context) {
         get() = prefs.getString(KEY_VIN, null)
         set(value) = prefs.edit().putString(KEY_VIN, value).apply()
 
+    /** 화면 테마: BLACK(기본) / WHITE / BLUE / PURPLE */
+    var themeId: String
+        get() = prefs.getString(KEY_THEME, "BLACK") ?: "BLACK"
+        set(value) = prefs.edit().putString(KEY_THEME, value).apply()
+
     companion object {
+        private const val KEY_THEME = "theme"
         private const val KEY_VIN = "confirmedVin"
         private const val KEY_SAVED = "saved"
         private const val KEY_PROFILE = "profile"

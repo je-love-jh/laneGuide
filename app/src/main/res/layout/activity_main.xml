@@ -1,185 +1,461 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- DESIGN.md 의 640×900 기준 화면. dp 는 이 기준 크기의 1단위이고, 실제 창 크기에 맞춰 MainActivity 가 비례해서 키운다. -->
+<com.laneguide.app.ui.GridBackground xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#121212"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:layout_height="match_parent">
 
-    <!-- 1. 지금 구간 한 줄 요약 -->
-    <TextView
-        android:id="@+id/laneSummary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:textSize="28sp"
-        android:textStyle="bold" />
+    <!-- 맨 위 오버레이는 파일 맨 끝의 redVignette -->
+    <com.laneguide.app.ui.StageFrame
+        android:id="@+id/stage"
+        android:layout_width="640dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:clipChildren="false">
 
-    <TextView
-        android:id="@+id/speedText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:textColor="#9AA0A6"
-        android:textSize="16sp" />
-
-    <!-- 2. 차로 그림 -->
-    <com.laneguide.app.ui.LaneBoardView
-        android:id="@+id/laneBoard"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_weight="1" />
-
-    <!-- 3. 최근 경고 -->
-    <TextView
-        android:id="@+id/alertText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="#3C3200"
-        android:padding="16dp"
-        android:textColor="#FDD663"
-        android:textSize="20sp" />
-
-    <!-- 4. 설정 (정차 중에만) -->
-    <TextView
-        android:id="@+id/lockText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="주행 중에는 설정을 바꿀 수 없습니다"
-        android:textColor="#9AA0A6"
-        android:textSize="16sp"
-        android:visibility="gone" />
-
-    <!-- 저장 후 접힌 상태: 프로필 한 줄 + 변경 버튼 -->
-    <LinearLayout
-        android:id="@+id/profileBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/profileSummary"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp" />
-
-        <Button
-            android:id="@+id/btnEdit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minHeight="64dp"
-            android:minWidth="120dp"
-            android:text="변경" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/settingsPanel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:orientation="vertical">
-
-        <!-- 차대번호 기반 추천 안내 (확인 전까지만 보임) -->
-        <TextView
-            android:id="@+id/vinHint"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:background="#0B3A5B"
-            android:padding="12dp"
-            android:textColor="#8AB4F8"
-            android:textSize="16sp"
-            android:visibility="gone" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="차종 프로필"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp" />
-
+        <!-- ===== 주행 화면 ===== -->
         <LinearLayout
+            android:id="@+id/mainContent"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            android:orientation="vertical">
 
-            <Button
-                android:id="@+id/btnPassenger"
-                android:layout_width="0dp"
+            <!-- 시연 주행 중 항상 보이는 표시 (GPS가 아니라 가상 위치로 달리는 중) -->
+            <LinearLayout
+                android:id="@+id/demoBanner"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:minHeight="64dp"
-                android:text="승용" />
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="24dp"
+                android:background="#0B3D91"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="12dp"
+                android:visibility="gone">
 
-            <Button
-                android:id="@+id/btnLightTruck"
-                android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/demoBannerText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="#FFFFFF"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/demoHintText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="#C6D8FF"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btnDemoStop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="52dp"
+                    android:minWidth="88dp"
+                    android:text="종료" />
+            </LinearLayout>
+
+            <!-- 1. 머리: 도로 이름 / 편도 N차로 / 속도 -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:minHeight="64dp"
-                android:text="소형 화물" />
+                android:gravity="bottom"
+                android:orientation="horizontal"
+                android:paddingStart="32dp"
+                android:paddingTop="28dp"
+                android:paddingEnd="32dp"
+                android:paddingBottom="12dp">
 
-            <Button
-                android:id="@+id/btnHeavyTruck"
-                android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/roadName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="sans-serif-medium"
+                        android:maxLines="1"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/laneTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="sans-serif-black"
+                        android:maxLines="1"
+                        android:textSize="44sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:gravity="end"
+                    android:orientation="vertical">
+
+                    <!-- HUD 테마에서만 보이는 눈금자 -->
+                    <com.laneguide.app.ui.HudRulerView
+                        android:id="@+id/hudRuler"
+                        android:layout_width="162dp"
+                        android:layout_height="10dp"
+                        android:layout_marginBottom="8dp"
+                        android:visibility="gone" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="bottom"
+                        android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/speedValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:textSize="40sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/speedUnit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_marginBottom="6dp"
+                        android:text="km/h"
+                        android:textSize="18sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 2. 요약 한 줄 -->
+            <TextView
+                android:id="@+id/laneSummary"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:minHeight="64dp"
-                android:text="중대형 화물" />
-        </LinearLayout>
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:minHeight="36dp"
+                android:paddingStart="32dp"
+                android:paddingEnd="32dp"
+                android:paddingBottom="4dp"
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="차 높이 (적재물 포함)"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp" />
+            <!-- 3. 차로판 (원근 도로). 남는 높이를 모두 차지하고, 안에서 640×500 비율로 그린다 -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+                <com.laneguide.app.ui.LaneBoardView
+                    android:id="@+id/laneBoard"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
+                <!-- 높이 제한 시설물이 가까울 때: 경고 카드 / 통과 가능 정보 카드 (DESIGN_WARN.md) -->
+                <com.laneguide.app.ui.HeightCardView
+                    android:id="@+id/heightCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone" />
+            </FrameLayout>
+
+            <!-- 높이 경고 뒤에만 나타나는 우회 제안: 운전자가 눌러야만 내비 경로가 바뀐다 -->
             <Button
-                android:id="@+id/btnHeightDown"
-                android:layout_width="96dp"
+                android:id="@+id/detourButton"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="24dp"
+                android:text="우회 경로로 변경"
+                android:textSize="22sp"
+                android:visibility="gone" />
+
+            <!-- 4. 안내 상자 -->
+            <TextView
+                android:id="@+id/alertText"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="64dp"
-                android:text="−" />
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="24dp"
+                android:gravity="center_vertical"
+                android:letterSpacing="0.03"
+                android:lineSpacingMultiplier="1.35"
+                android:minHeight="66dp"
+                android:paddingStart="28dp"
+                android:paddingTop="24dp"
+                android:paddingEnd="28dp"
+                android:paddingBottom="24dp"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+
+            <!-- 시연 주행: 정차 중에만 시작할 수 있다. 위치는 GPS 대신 가상 콘솔 ACCEL 속도만큼 경로를 따라 간다 -->
+            <LinearLayout
+                android:id="@+id/demoBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="24dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btnDemoHighway"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        android:text="시연 주행: 고속도로"
+                        android:textSize="17sp" />
+
+                    <Button
+                        android:id="@+id/btnDemoUnderpass"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        android:text="시연 주행: 굴다리"
+                        android:textSize="17sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/demoNote"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textSize="14sp" />
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/heightValue"
-                android:layout_width="0dp"
+                android:id="@+id/lockText"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textColor="#FFFFFF"
-                android:textSize="28sp" />
+                android:paddingStart="32dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="24dp"
+                android:text="주행 중에는 설정을 바꿀 수 없습니다"
+                android:textSize="16sp"
+                android:visibility="gone" />
 
-            <Button
-                android:id="@+id/btnHeightUp"
-                android:layout_width="96dp"
+            <!-- 5. 프로필 줄: "소형 화물 · 높이 2.2 m" + [변경] -->
+            <LinearLayout
+                android:id="@+id/profileBar"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="64dp"
-                android:text="+" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="32dp"
+                android:paddingTop="14dp"
+                android:paddingEnd="24dp"
+                android:paddingBottom="22dp">
+
+                <TextView
+                    android:id="@+id/profileSummary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="20sp" />
+
+                <Button
+                    android:id="@+id/btnEdit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:minWidth="120dp"
+                    android:text="변경"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btnSave"
+        <!-- ===== 설정 화면 (정차 중에만) ===== -->
+        <LinearLayout
+            android:id="@+id/settingsPanel"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:minHeight="64dp"
-            android:text="저장" />
-    </LinearLayout>
-</LinearLayout>
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="32dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/settingsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-black"
+                android:text="설정"
+                android:textSize="40sp" />
+
+            <TextView
+                android:id="@+id/settingsSub"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="정차 중에만 바꿀 수 있습니다"
+                android:textSize="18sp" />
+
+            <!-- 차대번호 기반 추천 안내 (확인 전까지만 보임) -->
+            <TextView
+                android:id="@+id/vinHint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="#0B3A5B"
+                android:padding="12dp"
+                android:textColor="#8AB4F8"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/profileLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="26dp"
+                android:text="차종 프로필"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnPassenger"
+                    android:layout_width="0dp"
+                    android:layout_height="68dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:text="승용"
+                    android:textSize="21sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnLightTruck"
+                    android:layout_width="0dp"
+                    android:layout_height="68dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:text="소형 화물"
+                    android:textSize="21sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnHeavyTruck"
+                    android:layout_width="0dp"
+                    android:layout_height="68dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:text="중대형 화물"
+                    android:textSize="21sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/heightLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="26dp"
+                android:text="차 높이 (적재물 포함)"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnHeightDown"
+                    android:layout_width="96dp"
+                    android:layout_height="68dp"
+                    android:text="−"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:id="@+id/heightValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif-black"
+                    android:gravity="center"
+                    android:textSize="36sp" />
+
+                <Button
+                    android:id="@+id/btnHeightUp"
+                    android:layout_width="96dp"
+                    android:layout_height="68dp"
+                    android:text="+"
+                    android:textSize="30sp" />
+            </LinearLayout>
+
+            <!-- 화면 테마: 색 견본 버튼 4개 (블랙 / 화이트 / 블루 / 퍼플) -->
+            <TextView
+                android:id="@+id/themeLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="26dp"
+                android:text="화면 테마"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/themeRow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal" />
+
+            <TextView
+                android:id="@+id/themeNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="기본: 블랙·화이트 / 특수(HUD): 블루·퍼플 · 차로 색의 뜻은 모든 테마에서 같습니다"
+                android:textSize="17sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:text="저장"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </com.laneguide.app.ui.StageFrame>
+
+    <!-- 높이 경고 때만 보이는 화면 가장자리 붉은 빛(정적). 터치를 막지 않는다 -->
+    <com.laneguide.app.ui.RedVignetteView
+        android:id="@+id/redVignette"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+</com.laneguide.app.ui.GridBackground>

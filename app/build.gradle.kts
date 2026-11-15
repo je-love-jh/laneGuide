@@ -36,6 +36,8 @@ android {
 dependencies {
     // Pleos Vehicle SDK: 크루즈 상태, 방향지시등 신호
     implementation("ai.pleos.playground:Vehicle:2.3.2")
-    // implementation("ai.pleos.playground:NaviHelper:3.0.5")
-    // implementation("ai.pleos.playground:TextToSpeech:3.3.1")
+    // Pleos NaviHelper SDK: 경유지 추가·재탐색 (우회 경로 요청)
+    implementation("ai.pleos.playground:NaviHelper:3.0.5")
+    // Pleos TextToSpeech SDK: 음성 안내 (에뮬레이터·차량에는 표준 안드로이드 TTS 엔진이 없다)
+    implementation("ai.pleos.playground:TextToSpeech:3.3.1")
 }

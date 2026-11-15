@@ -30,7 +30,11 @@ data class HeightFacility(
     val name: String,
     val limitM: Double,
     val point: GeoPoint,
+    /** 이 시설물을 피해 가기 위해 경유지로 넣을 우회 지점 (없으면 우회 버튼을 띄우지 않는다) */
+    val detour: Detour? = null,
 )
+
+data class Detour(val name: String, val point: GeoPoint)
 
 /** 화물차 통행제한 구간 (중심점 + 반경으로 단순화) */
 data class RestrictionZone(

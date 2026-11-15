@@ -1,6 +1,7 @@
 package com.laneguide.app.data
 
 import android.content.Context
+import com.laneguide.app.model.Detour
 import com.laneguide.app.model.GeoPoint
 import com.laneguide.app.model.GoldenDataset
 import com.laneguide.app.model.HeightFacility
@@ -33,6 +34,9 @@ object DatasetLoader {
                     name = o.getString("name"),
                     limitM = o.getDouble("limitM"),
                     point = GeoPoint(o.getDouble("lat"), o.getDouble("lon")),
+                    detour = o.optJSONObject("detour")?.let { d ->
+                        Detour(d.getString("name"), GeoPoint(d.getDouble("lat"), d.getDouble("lon")))
+                    },
                 )
             },
             zones = root.getJSONArray("zones").objects().map { o ->

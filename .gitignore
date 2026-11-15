@@ -5,6 +5,9 @@ local.properties
 CLAUDE.md
 .claude/
 
+# 시연 영상 녹화본 (용량이 커서 올리지 않음)
+video/
+
 # Pleos SDK AAR 사본 (배포 금지 가능성, 확인용)
 sdk-inspect/
 

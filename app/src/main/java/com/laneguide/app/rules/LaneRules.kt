@@ -43,12 +43,18 @@ object LaneRules {
     /** 구간이 바뀌거나 크루즈를 켤 때 읽어주는 문장 */
     fun announcement(lanes: Int, profile: VehicleProfile): String {
         if (!profile.isTruck) {
-            return "현재 구간은 편도 ${lanes}차로입니다. 1차로는 추월할 때만 이용하세요."
+            val states = laneStates(lanes, profile)
+            val passing = lanesOf(states, LaneState.PASSING_ONLY).firstOrNull()
+            val drive = lanesOf(states, LaneState.DRIVE).joinToString(", ")
+            return listOfNotNull(
+                passing?.let { "${it}차로는 추월차로입니다." },
+                if (drive.isNotEmpty()) "${drive}차로는 주행차로입니다." else null,
+            ).joinToString(" ")
         }
         val states = laneStates(lanes, profile)
         val drive = lanesOf(states, LaneState.DRIVE).joinToString(", ")
         val passing = lanesOf(states, LaneState.PASSING_ONLY).firstOrNull()
-        val passingText = if (passing != null) " 앞지르기할 때는 ${passing}차로를 잠시 이용할 수 있습니다." else ""
-        return "현재 구간은 편도 ${lanes}차로입니다. 화물차 지정차로는 ${drive}차로입니다.$passingText"
+        val passingText = if (passing != null) " ${passing}차로는 추월차로입니다." else ""
+        return "화물차 지정차로는 ${drive}차로입니다.$passingText"
     }
 }
