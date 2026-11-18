@@ -123,3 +123,4 @@ demo/       장면·재생·빌드 스크립트 (시연 GPX 는 app/src/main/ass
 ```
 
 지도 데이터 © OpenStreetMap contributors (ODbL).
+
